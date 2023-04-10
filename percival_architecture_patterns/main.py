@@ -8,19 +8,23 @@ config = dotenv_values(".env")
 
 app = FastAPI()
 
+
 @app.on_event("startup")
 def startup_db_client():
     app.mongodb_client = MongoClient(config["ATLAS_URI"])
     app.database = app.mongodb_client[config["DB_NAME"]]
-    print(f'Connected to MongoDB database: {app.database}')
+    print(f"Connected to MongoDB database: {app.database}")
+
 
 @app.on_event("shutdown")
 def shutdown_db_client():
     app.mongodb_client.close()
 
+
 @app.get("/")
 async def root():
     return {"message": "Welcome to our batch project, with FastAPI and MongoDB!"}
+
 
 app.include_router(batch_router)
 app.include_router(order_line_router)
