@@ -1,10 +1,8 @@
 from percival_architecture_patterns.domain.models import Batch, UpdateBatch
-from percival_architecture_patterns.service_layer.batch import update_existing_batch
 from percival_architecture_patterns.adapters.repositories.mongo.mongo_repository import (
     MongoRepository,
 )
 from fastapi import APIRouter, Body, Request, HTTPException, status
-from fastapi.encoders import jsonable_encoder
 from typing import List
 
 batch_router = APIRouter(

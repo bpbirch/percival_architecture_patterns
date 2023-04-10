@@ -1,10 +1,8 @@
 from percival_architecture_patterns.domain.models import OrderLine, Batch
-from percival_architecture_patterns.domain.utils import allocate
 from percival_architecture_patterns.adapters.repositories.mongo.mongo_repository import (
     MongoRepository,
 )
-from fastapi import APIRouter, Body, Request, Response, HTTPException, status
-from fastapi.encoders import jsonable_encoder
+from fastapi import APIRouter, Body, Request, HTTPException, status
 from typing import List
 
 order_line_router = APIRouter(

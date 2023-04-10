@@ -5,7 +5,7 @@ from percival_architecture_patterns.service_layer.batch import update_existing_b
 from percival_architecture_patterns.domain.models import Batch, OrderLine, UpdateBatch
 from percival_architecture_patterns.domain.utils import allocate
 from typing import Optional, List
-from fastapi import Request, Response
+from fastapi import Request
 from fastapi.encoders import jsonable_encoder
 
 
