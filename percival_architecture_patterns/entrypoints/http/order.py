@@ -1,6 +1,8 @@
 from percival_architecture_patterns.domain.models import OrderLine, Batch
 from percival_architecture_patterns.domain.utils import allocate
-from percival_architecture_patterns.adapters.repositories.mongo.mongo_repository import MongoRepository
+from percival_architecture_patterns.adapters.repositories.mongo.mongo_repository import (
+    MongoRepository,
+)
 from fastapi import APIRouter, Body, Request, Response, HTTPException, status
 from fastapi.encoders import jsonable_encoder
 from typing import List
@@ -12,16 +14,14 @@ order_line_router = APIRouter(
 
 repo = MongoRepository()
 
+
 @order_line_router.post(
     "/",
     response_description="Create a new order_line",
     status_code=status.HTTP_201_CREATED,
 )
 def create_order_line(request: Request, order_line: OrderLine = Body(...)):
-    created_order_line = repo.create_order_line(
-        order_line,
-        request=request
-    )
+    created_order_line = repo.create_order_line(order_line, request=request)
     if not created_order_line:
         raise HTTPException(
             status_code=status.HTTP_422_UNPROCESSABLE_ENTITY,

@@ -63,5 +63,5 @@ def update_batch_by_reference(
             status_code=status.HTTP_404_NOT_FOUND,
             detail=f"batch with reference/_id {reference} not found",
         )
-    
+
     return updated_batch

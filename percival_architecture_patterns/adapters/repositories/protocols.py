@@ -18,9 +18,7 @@ class AbstractWriteRepository(Protocol):
     ) -> OrderLine:
         """Create an order_line"""
 
-    def deallocate_order_line(
-        self, order_id: str, request: Optional[Request]
-    ) -> Batch:
+    def deallocate_order_line(self, order_id: str, request: Optional[Request]) -> Batch:
         """Deallocate an order line"""
 
 

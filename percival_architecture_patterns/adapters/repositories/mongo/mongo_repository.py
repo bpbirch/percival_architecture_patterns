@@ -24,7 +24,9 @@ class MongoRepository(AbstractRepository):
         self, reference: str, update_batch: UpdateBatch, request: Optional[Request]
     ) -> Batch:
         if (
-            existing_batch := request.app.database["batches"].find_one({"_id": reference})
+            existing_batch := request.app.database["batches"].find_one(
+                {"_id": reference}
+            )
         ) is None:
             return None
 
@@ -50,7 +52,7 @@ class MongoRepository(AbstractRepository):
 
         if (batch := allocate(order_line, batches)) is None:
             return None
-        
+
         request.app.database["batches"].update_one(
             {"_id": batch.reference}, {"$set": jsonable_encoder(batch)}
         )
@@ -65,11 +67,11 @@ class MongoRepository(AbstractRepository):
 
         return created_order_line
 
-    def deallocate_order_line(
-        self, order_id: str, request: Optional[Request]
-    ) -> Batch:
+    def deallocate_order_line(self, order_id: str, request: Optional[Request]) -> Batch:
         if (
-            order_line := request.app.database["order_lines"].find_one({"_id": order_id})
+            order_line := request.app.database["order_lines"].find_one(
+                {"_id": order_id}
+            )
         ) is None:
             return None
 
