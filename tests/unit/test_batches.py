@@ -23,7 +23,6 @@ class BatchTester(unittest.TestCase):
         self.mismatch_qty_batch, self.mismatch_qty_line = make_batch_and_line(
             "SMALL-TABLE", "SMALL-TABLE", 10, 20
         )
-        self.mismatch_qty_batch.reference = self.matching_batch.reference
         self.mismatch_sku_batch, self.mismatch_sku_line = make_batch_and_line(
             "SMALL-TABLE", "BIG-LAMP", 20, 10
         )
@@ -73,4 +72,5 @@ class BatchTester(unittest.TestCase):
         self.assertTrue(self.matching_batch.available_quantity == 10)
 
     def test_eq(self) -> None:
+        self.mismatch_qty_batch.reference = self.matching_batch.reference
         self.assertTrue(self.matching_batch == self.mismatch_qty_batch)

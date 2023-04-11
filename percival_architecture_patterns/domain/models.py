@@ -4,6 +4,7 @@ from datetime import datetime, timedelta
 from dataclasses import dataclass
 from percival_architecture_patterns.domain.exceptions import OutOfStock, SkuMismatch
 from pydantic import BaseModel, Field
+from fastapi import Request
 
 
 class Frozen(BaseModel):
@@ -13,7 +14,7 @@ class Frozen(BaseModel):
 
 
 class OrderLine(Frozen):
-    order_id: str = Field(default_factory=uuid.uuid4, alias="_id")
+    order_id: str = Field(default_factory=lambda: uuid.uuid4(), alias="_id")
     sku: str
     qty: int
 
@@ -25,12 +26,14 @@ class UpdateBatch(BaseModel):
 
 
 class Batch(BaseModel):
-    reference: str = Field(default_factory=uuid.uuid4, alias="_id")
+    reference: str = Field(default_factory=lambda: uuid.uuid4(), alias="_id")
     sku: str
     purchased_quantity: int
     eta: datetime = datetime.now() + timedelta(days=7)
-    # allocations: Union[Set[OrderLine], FrozenSet[OrderLine]] = set()
     allocations: List[OrderLine] = []
+
+    class Config:
+        orm_mode = True
 
     def __eq__(self, other):
         if not isinstance(other, Batch):

@@ -4,6 +4,7 @@ from percival_architecture_patterns.adapters.repositories.mongo.mongo_repository
 )
 from fastapi import APIRouter, Body, Request, HTTPException, status
 from typing import List
+import percival_architecture_patterns.service_layer.batch as batch_service_layer
 
 batch_router = APIRouter(
     prefix="/batches",
@@ -17,14 +18,18 @@ repo = MongoRepository()
     "/", response_description="Create a new batch", status_code=status.HTTP_201_CREATED
 )
 def create_batch(request: Request, batch: Batch = Body(...)):
-    return repo.create_batch(batch, request=request)
+    return batch_service_layer.create_batch(
+        batch=batch,
+        repo=repo,
+        request=request,
+    )
 
 
 @batch_router.get(
     "/", response_description="List all batches", response_model=List[Batch]
 )
 def get_all_batches(request: Request):
-    return repo.get_all_batches(request=request)
+    return batch_service_layer.get_all_batches(repo=repo, request=request)
 
 
 @batch_router.get(
@@ -34,13 +39,15 @@ def get_batch_by_reference(
     reference: str,
     request: Request,
 ):
-    batch = repo.get_batch_by_reference(reference, request=request)
-    if batch:
-        return batch
-    raise HTTPException(
-        status_code=status.HTTP_404_NOT_FOUND,
-        detail=f"Batch with reference {reference} not found",
+    batch = batch_service_layer.get_batch_by_reference(
+        reference=reference, repo=repo, request=request
     )
+    if not batch:
+        raise HTTPException(
+            status_code=status.HTTP_404_NOT_FOUND,
+            detail=f"Batch with reference {reference} not found",
+        )
+    return batch
 
 
 @batch_router.put(
@@ -51,9 +58,10 @@ def update_batch_by_reference(
     update_batch: UpdateBatch,
     request: Request,
 ):
-    updated_batch = repo.update_batch_by_reference(
-        reference,
-        update_batch,
+    updated_batch = batch_service_layer.update_existing_batch(
+        reference=reference,
+        update_batch=update_batch,
+        repo=repo,
         request=request,
     )
     if not updated_batch:

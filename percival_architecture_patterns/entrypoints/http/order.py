@@ -2,6 +2,7 @@ from percival_architecture_patterns.domain.models import OrderLine, Batch
 from percival_architecture_patterns.adapters.repositories.mongo.mongo_repository import (
     MongoRepository,
 )
+import percival_architecture_patterns.service_layer.order as order_service_layer
 from fastapi import APIRouter, Body, Request, HTTPException, status
 from typing import List
 
@@ -18,8 +19,12 @@ repo = MongoRepository()
     response_description="Create a new order_line",
     status_code=status.HTTP_201_CREATED,
 )
-def create_order_line(request: Request, order_line: OrderLine = Body(...)):
-    created_order_line = repo.create_order_line(order_line, request=request)
+def allocate_order_line(request: Request, order_line: OrderLine = Body(...)):
+    created_order_line = order_service_layer.allocate_order_line(
+        repo=repo,
+        order_line=order_line,
+        request=request,
+    )
     if not created_order_line:
         raise HTTPException(
             status_code=status.HTTP_422_UNPROCESSABLE_ENTITY,
@@ -32,7 +37,10 @@ def create_order_line(request: Request, order_line: OrderLine = Body(...)):
     "/", response_description="Get all order_lines", response_model=List[OrderLine]
 )
 def get_all_order_lines(request: Request):
-    return repo.get_all_order_lines(request=request)
+    return order_service_layer.get_all_order_lines(
+        repo=repo,
+        request=request,
+    )
 
 
 @order_line_router.get(
@@ -42,8 +50,12 @@ def get_order_line_by_order_id(
     order_id: str,
     request: Request,
 ):
-    order_line = request.app.database["order_lines"].find_one({"_id": order_id})
-    if order_line is None:
+    order_line = order_service_layer.get_order_line_by_order_id(
+        order_id=order_id,
+        repo=repo,
+        request=request,
+    )
+    if not order_line:
         raise HTTPException(
             status_code=status.HTTP_404_NOT_FOUND,
             detail=f"No order_line with order_id {order_id} found",
@@ -58,7 +70,11 @@ def get_order_line_by_order_id(
     response_model=Batch,
 )
 def deallocate_order_line(order_id: str, request: Request):
-    deallocated_batch = repo.deallocate_order_line(order_id, request=request)
+    deallocated_batch = order_service_layer.deallocate_order_line(
+        order_id=order_id,
+        repo=repo,
+        request=request,
+    )
     if not deallocated_batch:
         raise HTTPException(
             status_code=status.HTTP_404_NOT_FOUND,

@@ -9,6 +9,7 @@ packages = [{include = "percival_architecture_patterns"}]
 [tool.taskipy.tasks]
 uvicorn = { cmd = "cd ./percival_architecture_patterns && python -m uvicorn main:app --reload", help = "Run code quality tests" }
 format = { cmd = "black percival_architecture_patterns tests", help = "Run black code formatting" }
+test = { cmd = "pytest -s tests", help = "Run pytest tests" }
 
 [tool.poetry.dependencies]
 python = "^3.9"
